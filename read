@@ -1,0 +1,182 @@
+// TaskManager.js
+import React, { Component } from 'react';
+import TaskList from './TaskList';
+import TaskForm from './TaskForm';
+
+class TaskManager extends Component {
+  state = {
+    tasks: [
+      { id: 1, title: 'Task 1', completed: false },
+      { id: 2, title: 'Task 2', completed: true },
+    ],
+  };
+
+  addTask = (title) => {
+    const newTask = {
+      id: Date.now(),
+      title,
+      completed: false,
+    };
+    this.setState((prevState) => ({
+      tasks: [...prevState.tasks, newTask],
+    }));
+  };
+
+  toggleTaskStatus = (taskId) => {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      ),
+    }));
+  };
+
+  deleteTask = (taskId) => {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.filter((task) => task.id !== taskId),
+    }));
+  };
+
+  render() {
+    return (
+      <div className="task-manager">
+        <h1>Task Manager</h1>
+        <TaskForm addTask={this.addTask} />
+        <TaskList
+          tasks={this.state.tasks}
+          toggleTaskStatus={this.toggleTaskStatus}
+          deleteTask={this.deleteTask}
+        />
+      </div>
+    );
+  }
+}
+
+export default TaskManager;
+
+
+
+//tasklist
+import React from 'react';
+import TaskItem from './TaskItem';
+
+const TaskList = ({ tasks, toggleTaskStatus, deleteTask }) => {
+  return (
+    <div className="task-list">
+      {tasks.length === 0 ? (
+        <p>No tasks to display.</p>
+      ) : (
+        <ul>
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              toggleTaskStatus={toggleTaskStatus}
+              deleteTask={deleteTask}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default TaskList;
+
+
+
+//ti
+import React from 'react';
+
+const TaskItem = ({ task, toggleTaskStatus, deleteTask }) => {
+  return (
+    <li className={task.completed ? 'completed' : ''}>
+      <span>{task.title}</span>
+      <button onClick={() => toggleTaskStatus(task.id)}>
+        {task.completed ? 'Mark Incomplete' : 'Mark Complete'}
+      </button>
+      <button onClick={() => deleteTask(task.id)}>Delete</button>
+    </li>
+  );
+};
+//
+export default TaskItem;
+
+
+//tf
+import React, { useState } from 'react';
+
+const TaskForm = ({ addTask }) => {
+  const [title, setTitle] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (title.trim() !== '') {
+      addTask(title);
+      setTitle('');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Enter a new task"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <button type="submit">Add Task</button>
+    </form>
+  );
+};
+
+export default TaskForm;
+
+//
+
+index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+reportWebVitals();
+
+//reportweb
+const reportWebVitals = onPerfEntry => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    });
+  }
+};
+
+export default reportWebVitals;
+//
+ import logo from './logo.svg';
+import './App.css';
+import TaskManager from './components/TaskManager';
+
+function App() {
+  return (
+    <div className="App">
+      <TaskManager></TaskManager>
+    </div>
+  );
+}
+
+export default App;
+
+
+
